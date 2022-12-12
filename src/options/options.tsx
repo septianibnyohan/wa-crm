@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './popup.css'
+import './options.css'
 import * as ReactDOMClient from 'react-dom/client';
 
 const test = <img src="icon.png" /> 

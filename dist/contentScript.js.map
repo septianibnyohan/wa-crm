@@ -1,0 +1,1 @@
+{"version":3,"file":"contentScript.js","mappings":";;;;;AAAA","sources":["webpack://wa-crm/./src/contentScript/contentScript.ts"],"sourcesContent":["console.log('Content script');\n"],"names":[],"sourceRoot":""}

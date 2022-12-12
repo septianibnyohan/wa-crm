@@ -1,0 +1,1 @@
+{"version":3,"file":"background.js","mappings":";;;;;AAAA","sources":["webpack://wa-crm/./src/background/background.ts"],"sourcesContent":["console.log('Background script');\n"],"names":[],"sourceRoot":""}
