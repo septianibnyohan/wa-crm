@@ -1,1 +1,1 @@
-{"version":3,"file":"background.js","mappings":";;;;;AAAA","sources":["webpack://wa-crm/./src/background/background.ts"],"sourcesContent":["console.log('Background script');\n"],"names":[],"sourceRoot":""}
+{"version":3,"file":"background.js","mappings":";;;;;AAAA;AACA;AACA;AACA;AACA","sources":["webpack://wa-crm/./src/background/background.ts"],"sourcesContent":["console.log('Background script');\n// TODO: background script\nchrome.runtime.onInstalled.addListener(() => {\n    // TODO: on installed function\n});\n"],"names":[],"sourceRoot":""}
