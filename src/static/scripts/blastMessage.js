@@ -22,6 +22,8 @@ var fileUpload = document.getElementById("phone_number");
     if (typeof (FileReader) != "undefined") {
       var reader = new FileReader();
       reader.onload = async function (e) {
+        var image = document.getElementById('hdn_image').value;
+
         var rows = e.target.result.split("\n");
         for (var i = 1; i < rows.length; i++) {
           var delay = getRndInteger(minDelay, maxDelay);
@@ -45,7 +47,8 @@ var fileUpload = document.getElementById("phone_number");
               var chat_id = phone.trim() + "@c.us";
 
               console.log(`send Message to ${chat_id}`)
-              window.WAPI.sendMessage(chat_id,message);
+              //window.WAPI.sendMessage(chat_id,message);
+              window.WAPI.sendImage(image, chat_id, 'gambar.jpg', message);
               console.log(`wait ${delay} ms`);
               
               await sleep(delay);

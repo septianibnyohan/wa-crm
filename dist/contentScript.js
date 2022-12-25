@@ -34099,6 +34099,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
 const Sender = () => {
+    const [imageAttach, setImageAttach] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
     const runScript = (scriptFile) => {
         var _script = document.createElement('script');
         _script.setAttribute('src', chrome.runtime.getURL(scriptFile));
@@ -34107,6 +34108,7 @@ const Sender = () => {
     };
     function sendMessage() {
         runScript("scripts/blastMessage.js");
+        //runMethod(`window.WAPI.sendMessage('6285778151604@c.us', 'test').then(res => res.id)`);
     }
     const toDataURL = e => new Promise((t, n) => {
         const r = new FileReader;
@@ -34114,6 +34116,56 @@ const Sender = () => {
         r.onerror = n;
         r.readAsDataURL(e);
     });
+    const a = (e, t = !0) => {
+        const n = "(() => {" + e + "})();", r = document.createElement("script");
+        r.textContent = n, (document.head || document.documentElement).appendChild(r), t && r.remove();
+    };
+    const runMethod = e => r(void 0, void 0, void 0, (function* () {
+        const t = (new Date).getTime();
+        return new Promise((n, r) => {
+            let i = !1;
+            const o = e => {
+                const r = e.detail;
+                if (null !== r && r.id === t && "result" === r.type)
+                    return document.removeEventListener("WAPIResult", o), i = !0, n(r.data);
+            };
+            document.addEventListener("WAPIResult", o), setTimeout(() => {
+                if (!i)
+                    return document.removeEventListener("WAPIResult", o), r("Failed to runMethod");
+            }, 15e3), a(`\n      if (!('WAPI' in window)) {\n        alert("WAPI NOT FOUND IN ${encodeURIComponent(e)}")\n        return\n      }\n\n      // try {\n      const result = Promise.resolve(${e});\n\n      result.then(res => {\n        const data = {\n          id: ${t},\n          type: "result",\n          data: res\n        };\n  \n        const event = new CustomEvent("WAPIResult", { detail: data });\n        document.dispatchEvent(event);\n        console.log("Dispatching WAPIResult")\n      })\n      // } catch (err) {\n      //   alert(err)\n      // }\n    `);
+        }).catch(t => {
+            console.log(`error in : \n${e} \n`), console.log({
+                err: t
+            });
+        });
+    }));
+    var r = function (e, t, n, r) {
+        return new (n || (n = Promise))((function (a, i) {
+            function o(e) {
+                try {
+                    c(r.next(e));
+                }
+                catch (e) {
+                    i(e);
+                }
+            }
+            function s(e) {
+                try {
+                    c(r.throw(e));
+                }
+                catch (e) {
+                    i(e);
+                }
+            }
+            function c(e) {
+                var t;
+                e.done ? a(e.value) : (t = e.value, t instanceof n ? t : new n((function (e) {
+                    e(t);
+                }))).then(o, s);
+            }
+            c((r = r.apply(e, t || [])).next());
+        }));
+    };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null,
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: "max-w-xl mx-auto" },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", { className: "px-8 py-4 text-2xl font-semibold text-gray-900" }, "Send Message"),
@@ -34125,12 +34177,14 @@ const Sender = () => {
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: "flex flex-row items-center justify-between" },
                             react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", { className: "font-semibold text-gray-900" }, "Image"),
                             react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", { className: "py-2" },
+                                react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", { type: "hidden", id: "hdn_image", name: "hdn_image", value: imageAttach != null ? imageAttach.dataURL : "" }),
                                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", { className: "hidden", type: "file", accept: "image/*", name: "image", onChange: e => {
                                         const [t] = e.target.files;
                                         toDataURL(t).then(e => {
-                                            // B(Object.assign(Object.assign({}, t), {
-                                            //     dataURL: e
-                                            // }))
+                                            setImageAttach(Object.assign(Object.assign({}, t), {
+                                                dataURL: e
+                                            }));
+                                            //console.log(imageAttach);
                                         });
                                     } }),
                                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", { className: "px-4 py-2 text-sm font-semibold tracking-widest text-blue-700 uppercase bg-blue-200 rounded shadow pointer-events-none" }, "Upload Image"))),

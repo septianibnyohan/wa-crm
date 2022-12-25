@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 const Sender : React.FC<{}> = () =>  {
+
+    const [imageAttach, setImageAttach] = useState(null);
 
     const runScript = (scriptFile:string) =>
     {
@@ -12,7 +14,7 @@ const Sender : React.FC<{}> = () =>  {
     function sendMessage()
     {
         runScript("scripts/blastMessage.js");
-        
+        //runMethod(`window.WAPI.sendMessage('6285778151604@c.us', 'test').then(res => res.id)`);
     }
 
     const toDataURL = e => new Promise((t, n) => {
@@ -21,6 +23,58 @@ const Sender : React.FC<{}> = () =>  {
         r.onerror = n; 
         r.readAsDataURL(e);
 	})
+
+    const a = (e, t = !0) => {
+		const n = "(() => {" + e + "})();",
+			r = document.createElement("script");
+		r.textContent = n, (document.head || document.documentElement).appendChild(r), t && r.remove()
+	};
+
+    const runMethod = e => r(void 0, void 0, void 0, (function*() {
+		const t = (new Date).getTime();
+		return new Promise((n, r) => {
+			let i = !1;
+			const o = e => {
+				const r = e.detail;
+				if (null !== r && r.id === t && "result" === r.type) return document.removeEventListener("WAPIResult", o), i = !0, n(r.data)
+			};
+			document.addEventListener("WAPIResult", o), setTimeout(() => {
+				if (!i) return document.removeEventListener("WAPIResult", o), r("Failed to runMethod")
+			}, 15e3), a(`\n      if (!('WAPI' in window)) {\n        alert("WAPI NOT FOUND IN ${encodeURIComponent(e)}")\n        return\n      }\n\n      // try {\n      const result = Promise.resolve(${e});\n\n      result.then(res => {\n        const data = {\n          id: ${t},\n          type: "result",\n          data: res\n        };\n  \n        const event = new CustomEvent("WAPIResult", { detail: data });\n        document.dispatchEvent(event);\n        console.log("Dispatching WAPIResult")\n      })\n      // } catch (err) {\n      //   alert(err)\n      // }\n    `)
+		}).catch(t => {
+			console.log(`error in : \n${e} \n`), console.log({
+				err: t
+			})
+		})
+	}));
+
+    var r = function(e, t, n, r) {
+		return new(n || (n = Promise))((function(a, i) {
+			function o(e) {
+				try {
+					c(r.next(e))
+				} catch (e) {
+					i(e)
+				}
+			}
+
+			function s(e) {
+				try {
+					c(r.throw(e))
+				} catch (e) {
+					i(e)
+				}
+			}
+
+			function c(e) {
+				var t;
+				e.done ? a(e.value) : (t = e.value, t instanceof n ? t : new n((function(e) {
+					e(t)
+				}))).then(o, s)
+			}
+			c((r = r.apply(e, t || [])).next())
+		}))
+	};
 
     return (
         <div>
@@ -35,13 +89,16 @@ const Sender : React.FC<{}> = () =>  {
                         <div className="flex flex-row items-center justify-between">
                             <span className="font-semibold text-gray-900">Image</span>
                             <label className="py-2">
+                                <input type="hidden" id="hdn_image" name="hdn_image" value={imageAttach != null ? imageAttach.dataURL : ""} />
                                 <input className="hidden" type="file" accept="image/*" name="image"
                                     onChange={e => {
                                         const [t] = e.target.files;
                                         toDataURL(t).then(e => {
-                                            // B(Object.assign(Object.assign({}, t), {
-                                            //     dataURL: e
-                                            // }))
+                                            setImageAttach(Object.assign(Object.assign({}, t), {
+                                                dataURL: e
+                                            }))
+
+                                            //console.log(imageAttach);
                                         })
                                     }}
                                 />
@@ -50,7 +107,8 @@ const Sender : React.FC<{}> = () =>  {
                         </div>
 
                         <label className="block">
-                            <textarea id="message" name="message" rows={3} className="block w-full form-input" placeholder="Enter message template" required={true}></textarea>
+                            <textarea id="message" name="message" rows={3} className="block w-full form-input" placeholder="Enter message template" 
+                                required={true}></textarea>
                         </label>
                         <button 
                             onClick={sendMessage}
